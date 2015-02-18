@@ -1,78 +1,85 @@
 require 'sinatra'
 require 'json'
 
-post '/start/:case' do
+post '/:case/start' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
 
-    # Dummy response
-    responseObject = {
-        "name" => "battlesnake-ruby",
-        "color" => "cyan",
-        "head_url" => "http://battlesnake-ruby.herokuapp.com/",
-        "taunt" => "battlesnake-ruby"
-    }
-
-    return responseObject.to_json
+    return doError('start', requestJson, params[:case])
 end
 
-post '/move/:case' do
+post '/:case/move' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
 
-    # Dummy response
-    responseObject = {
-        "move" => "up",
-        "taunt" => "going up!"
-    }
-
-    return responseObject.to_json
+    return doError('move', requestJson, params[:case])
 end
 
-post '/end/:case' do
+post '/:case/end' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
 
-    doError(requestJson, params[:case])
-
-    # No response required
-    responseObject = {}
-
-    return responseObject.to_json
+    return doError('end', requestJson, params[:case])
 end
 
 
-def doError(requestJson, errorCase)
+def doError(action, requestJson, errorCase)
+    errorCase = Integer(errorCase)
     case errorCase
-    when 1
+    when 1  # Bad JSON keys
+        return {
+            "bad_key" => "value",
+            "another_bad_key" => "another value"
+        }.to_json
 
-    when 2
+    when 2  # Bad JSON values
+        case action
+        when 'start'
+            return {
+                "name" => nil,
+                "color" => "not-a-colour",
+                "head_url" => "not-a-url",
+                "taunt" => 12345
+            }.to_json
+        when 'move'
+            return {
+                "move" => {},
+                "taunt" => {"cat" => "meow"}
+            }.to_json
+        end
 
-    when 3
+    when 3  # Text response
+        return "I am text"
 
-    when 4
+    when 3  # XML response
+        return "<html><head></head><body>I'm HTML!</body></html>"
 
-    when 5
+    when 4  # Binary response
+        content_type 'application/octet-stream'
+        return "\x01\x02\x03"
+
+    when 5  # 4xx response
+        status 400
+
+    when 6  # 5xx response
+        status 500
+
+    when 7  # 2 second response timeout
+        sleep(2.5)
+
+    when 8  # 2 second response exceed
+        stream do |out|
+            out.puts "Here's some text"
+            out.write "Here's some more text"
+            out.putc(65) unless out.closed?  # not sure
+            sleep(2.5)
+            out.puts "Here's some text"
+            out.write "Here's some more text"
+            out.flush
+        end
 
     else
+        return "Unknown error case"
 
     end
 end
-
-
-
-
-
-
-# Invalid/Incorrect/Missing JSON keys
-
-# Extremely large keys/values
-
-# Non-JSON responses: XML, HTML, Text, Binary
-
-# 2+ second timeouts
-
-# 2+ second response times
-
-post '/'
-
