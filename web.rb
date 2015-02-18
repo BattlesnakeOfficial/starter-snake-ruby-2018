@@ -26,6 +26,9 @@ end
 def doError(action, requestJson, errorCase)
     errorCase = Integer(errorCase)
     case errorCase
+    when 0  # Nothing
+        return
+
     when 1  # Bad JSON keys
         return {
             "bad_key" => "value",
@@ -77,6 +80,9 @@ def doError(action, requestJson, errorCase)
             out.write "Here's some more text"
             out.flush
         end
+
+    when 9  # Nil
+        return nil
 
     else
         return "Unknown error case"
