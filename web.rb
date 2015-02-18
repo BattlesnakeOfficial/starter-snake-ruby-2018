@@ -1,55 +1,78 @@
 require 'sinatra'
 require 'json'
 
-post '/start' do
+post '/start/:case' do
     requestBody = request.body.read
-
-    if requestBody
-        requestJson = JSON.parse(requestBody)
-    else
-        requestJson = {}
-    end
+    requestJson = requestBody ? JSON.parse(requestBody) : {}
 
     # Dummy response
-    response = {
+    responseObject = {
         "name" => "battlesnake-ruby",
         "color" => "cyan",
         "head_url" => "http://battlesnake-ruby.herokuapp.com/",
         "taunt" => "battlesnake-ruby"
     }
 
-    return response.to_json
+    return responseObject.to_json
 end
 
-post '/move' do
+post '/move/:case' do
     requestBody = request.body.read
-
-    if requestBody
-        requestJson = JSON.parse(requestBody)
-    else
-        requestJson = {}
-    end
+    requestJson = requestBody ? JSON.parse(requestBody) : {}
 
     # Dummy response
-    response = {
+    responseObject = {
         "move" => "up",
         "taunt" => "going up!"
     }
 
-    return response.to_json
+    return responseObject.to_json
 end
 
-post '/end' do
+post '/end/:case' do
     requestBody = request.body.read
+    requestJson = requestBody ? JSON.parse(requestBody) : {}
 
-    if requestBody
-        requestJson = JSON.parse(requestBody)
-    else
-        requestJson = {}
-    end
+    doError(requestJson, params[:case])
 
     # No response required
-    response = {}
+    responseObject = {}
 
-    return response.to_json
+    return responseObject.to_json
 end
+
+
+def doError(requestJson, errorCase)
+    case errorCase
+    when 1
+
+    when 2
+
+    when 3
+
+    when 4
+
+    when 5
+
+    else
+
+    end
+end
+
+
+
+
+
+
+# Invalid/Incorrect/Missing JSON keys
+
+# Extremely large keys/values
+
+# Non-JSON responses: XML, HTML, Text, Binary
+
+# 2+ second timeouts
+
+# 2+ second response times
+
+post '/'
+
