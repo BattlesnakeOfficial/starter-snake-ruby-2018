@@ -1,7 +1,4 @@
-=begin
-Author: Tram Ung
-Date: 8/2/2019
-=end
+#!/usr/bin/ruby
 require 'sinatra'
 require 'json'
 
@@ -10,26 +7,63 @@ get '/' do
      '<a href=\"https://docs.battlesnake.io\">https://docs.battlesnake.io</a>.'
 end
 
+$board = {x:0, y:0}
+$me = {x:0,y:0}
+$health = 0
+$id = ""
+# $food = []
+# $enemies = []
 post '/start' do
+    puts "START"
     requestBody = request.body.read
+    puts requestBody
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-
-    # Example response
+    $board[:x] = requestJson["board"]["width"].to_i
+    $board[:y] = requestJson["board"]["height"].to_i
+    puts $board.to_s
+    $me[:x] = requestJson["you"]["body"][0]["x"].to_i
+    $me[:y] = requestJson["you"]["body"][0]["y"].to_i
+    $health = requestJson["you"]["health"].to_i
+    $id = requestJson["you"]["id"]
+    puts $me.to_s
+    puts $health
+    puts $id
+    #Response
     responseObject = {
-        "color"=> "#fff000",
+        "color"=> "#000000",
     }
-
     return responseObject.to_json
 end
 
 post '/move' do
+    puts "MOVE"
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-
-    # Calculate a direction (example)
-    direction = ["up", "right"].sample
-
-    # Example response
+    $me[:x] = requestJson["you"]["body"][0]["x"].to_i
+    $me[:y] = requestJson["you"]["body"][0]["y"].to_i
+    puts $me.to_s
+    $health = requestJson["you"]["health"].to_i
+    puts $health
+    puts $board.to_s
+    directions = ["up", "right", "left", "down"]
+    direction = "up"
+    if $me[:y] == 0
+        puts "edge up"
+        direction = "left"
+    end
+    if  $me[:y] == $board[:y] - 1
+        puts "edge down"
+        direction = "right"
+    end  
+    if $me[:x] == 0
+        puts "edge left"
+        direction = "down"
+    end
+    if $me[:x] == $board[:x] - 1
+        puts "edge right"
+        direction = "up"
+    end
+    #Response
     responseObject = {
         "move" => direction
     }
