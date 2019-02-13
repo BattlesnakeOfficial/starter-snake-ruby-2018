@@ -11,7 +11,7 @@ $board = {x:0, y:0}
 $me = {x:0,y:0}
 $health = 0
 $id = ""
-# $food = []
+$food = []
 # $enemies = []
 post '/start' do
     puts "START"
@@ -45,6 +45,8 @@ post '/move' do
     $health = requestJson["you"]["health"].to_i
     puts $health
     puts $board.to_s
+    $food = requestJson["board"]["food"]
+    puts $food.to_s
     directions = ["up", "right", "left", "down"]
     direction = "up"
     if $me[:y] == 0
