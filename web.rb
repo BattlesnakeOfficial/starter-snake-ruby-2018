@@ -8,11 +8,11 @@ get '/' do
 end
 
 $board = {x:0, y:0}
-$me = {x:0,y:0}
+$me = []
 $health = 0
 $id = ""
 $food = []
-# $enemies = []
+$snakes = [] #this includes us as well
 post '/start' do
     puts "START"
     requestBody = request.body.read
@@ -21,8 +21,7 @@ post '/start' do
     $board[:x] = requestJson["board"]["width"].to_i
     $board[:y] = requestJson["board"]["height"].to_i
     puts $board.to_s
-    $me[:x] = requestJson["you"]["body"][0]["x"].to_i
-    $me[:y] = requestJson["you"]["body"][0]["y"].to_i
+    $me = requestJson["you"]["body"]
     $health = requestJson["you"]["health"].to_i
     $id = requestJson["you"]["id"]
     puts $me.to_s
@@ -40,14 +39,14 @@ post '/move' do
     puts "MOVE"
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-    $me[:x] = requestJson["you"]["body"][0]["x"].to_i
-    $me[:y] = requestJson["you"]["body"][0]["y"].to_i
-    puts $me.to_s
+    $me = requestJson["you"]["body"]
+    puts "me "+$me.to_s
     $health = requestJson["you"]["health"].to_i
     puts $health
-    puts $board.to_s
     $food = requestJson["board"]["food"]
-    puts $food.to_s
+    puts "food " + $food.to_s
+    $snakes = requestJson["board"]["snakes"]
+    puts "snakes " + $snakes.to_s
     directions = ["up", "right", "left", "down"]
     direction = "up"
 
@@ -91,6 +90,7 @@ post '/move' do
     if $me[:x] == $board[:x] - 1 and $me[:y] == $board[:y] - 1
       direction="up"
     end
+
 
     #Response
     responseObject = {
