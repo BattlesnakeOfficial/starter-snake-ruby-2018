@@ -49,22 +49,6 @@ post '/move' do
     puts $food.to_s
     directions = ["up", "right", "left", "down"]
     direction = "up"
-    if $me[:y] == 0
-        puts "edge up"
-        direction = "left"
-    end
-    if  $me[:y] == $board[:y] - 1
-        puts "edge down"
-        direction = "right"
-    end  
-    if $me[:x] == 0
-        puts "edge left"
-        direction = "down"
-    end
-    if $me[:x] == $board[:x] - 1
-        puts "edge right"
-        direction = "up"
-    end
     #Response
     responseObject = {
         "move" => direction
