@@ -28,9 +28,10 @@ post '/start' do
     puts $me.to_s
     puts $health
     puts $id
+    
     #Response
     responseObject = {
-        "color"=> "#000000",
+    "color"=> "#a7d366",
     }
     return responseObject.to_json
 end
@@ -49,22 +50,48 @@ post '/move' do
     puts $food.to_s
     directions = ["up", "right", "left", "down"]
     direction = "up"
+
+    #at upper wall (but not corner)
     if $me[:y] == 0
-        puts "edge up"
         direction = "left"
     end
-    if  $me[:y] == $board[:y] - 1
-        puts "edge down"
+
+    #at lower wall (but not corner)
+    if  $me[:y] == $board[:y] -1
         direction = "right"
     end  
+
+    #at left wall (but not corner)
     if $me[:x] == 0
-        puts "edge left"
         direction = "down"
     end
-    if $me[:x] == $board[:x] - 1
-        puts "edge right"
+
+    #at right wall (but not corner)
+    if $me[:x] == $board[:x] -1
         direction = "up"
     end
+
+    #at top left corner
+    if $me[:x] == 0 and $me[:y] ==0
+      direction="down"
+    end
+
+    #at top right corner
+    if $me[:x] == $board[:x] - 1 and $me[:y] == 0
+      direction="left"
+    end
+
+    #at bottom left corner
+    if $me[:x] == 0 and $me[:y] == $board[:y] - 1
+      puts "AHHHHHH"
+      direction="right"
+    end
+
+    #at bottom right corner
+    if $me[:x] == $board[:x] - 1 and $me[:y] == $board[:y] - 1
+      direction="up"
+    end
+
     #Response
     responseObject = {
         "move" => direction
