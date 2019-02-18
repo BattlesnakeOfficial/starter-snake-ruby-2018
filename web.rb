@@ -39,6 +39,8 @@ post '/move' do
     puts "MOVE"
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
+
+    print "JSON array: ", requestJson
     $me[:x] = requestJson["you"]["body"][0]["x"].to_i
     $me[:y] = requestJson["you"]["body"][0]["y"].to_i
     puts $me.to_s
@@ -65,6 +67,12 @@ post '/move' do
         puts "edge right"
         direction = "up"
     end
+
+    #Create board game array
+    boardArray = Array.new
+
+
+
     #Response
     responseObject = {
         "move" => direction
