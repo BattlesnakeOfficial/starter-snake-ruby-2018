@@ -13,6 +13,7 @@ $health = 0
 $id = ""
 $food = []
 $snakes = [] #this includes us as well
+$directions = {"up"=>[], "down"=>[], "left"=>[], "right"=>[]} #each possible direction with array of coordinates
 post '/start' do
     puts "START"
     requestBody = request.body.read
