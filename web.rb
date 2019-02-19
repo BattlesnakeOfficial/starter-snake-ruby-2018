@@ -14,7 +14,7 @@ $id = ""
 $food = []
 $snakes = [] #this includes us as well
 $head = []
-$directions = {"up"=>{"x"=>0,"y"=>0}, "down"=>{"x"=>0,"y"=>0}, "left"=>{"x"=>0,"y"=>0}, "right"=>{"x"=>0,"y"=>0}} #each possible direction with array of coordinates
+$directions = ["up"=>{"x"=>0,"y"=>0}, "down"=>{"x"=>0,"y"=>0}, "left"=>{"x"=>0,"y"=>0}, "right"=>{"x"=>0,"y"=>0}] #each possible direction with array of coordinates
 post '/start' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
@@ -27,7 +27,7 @@ post '/start' do
 
     #Response
     responseObject = {
-    "color"=> "#f88379",
+      "color"=> "#f88379",
     }
     return responseObject.to_json
 end
