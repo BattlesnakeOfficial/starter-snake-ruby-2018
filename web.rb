@@ -7,19 +7,19 @@ get '/' do
      '<a href=\"https://docs.battlesnake.io\">https://docs.battlesnake.io</a>.'
 end
 
-$board = {x:0, y:0}
+$board = {"x"=>0, "y"=>0}
 $me = []
 $health = 0
 $id = ""
 $food = []
 $snakes = [] #this includes us as well
 $head = []
-$directions = {"up"=>[], "down"=>[], "left"=>[], "right"=>[]} #each possible direction with array of coordinates
+$directions = {"up"=>{"x"=>0,"y"=>0}, "down"=>{"x"=>0,"y"=>0}, "left"=>{"x"=>0,"y"=>0}, "right"=>{"x"=>0,"y"=>0}} #each possible direction with array of coordinates
 post '/start' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-    $board[:x] = requestJson["board"]["width"].to_i
-    $board[:y] = requestJson["board"]["height"].to_i
+    $board["x"] = requestJson["board"]["width"].to_i
+    $board["y"] = requestJson["board"]["height"].to_i
     $me = requestJson["you"]["body"]
     $health = requestJson["you"]["health"].to_i
     $id = requestJson["you"]["id"]
@@ -27,7 +27,7 @@ post '/start' do
 
     #Response
     responseObject = {
-    "color"=> "#000000",
+      "color"=> "#000000",
     }
     return responseObject.to_json
 end
@@ -42,13 +42,11 @@ post '/move' do
     $head = $me[0]
     directions = ["up", "right", "left", "down"]
     direction = "up"  
-    
 
     #Response
     responseObject = {
         "move" => direction
     }
-
     return responseObject.to_json
 end
 
@@ -89,7 +87,7 @@ def isOutOfBounds(direction)
     y=$head["y"]
   end
 
-  if x<0 or x>($board[:x] -1)or y<0 or y>($board[:y] - 1)
+  if x<0 or x>($board["x"] -1)or y<0 or y>($board["y"] - 1)
     return true
   else
     return false
