@@ -30,7 +30,7 @@ post '/start' do
     
     #Response
     responseObject = {
-    "color"=> "#a7d366",
+    "color"=> "#f88379",
     }
     return responseObject.to_json
 end
