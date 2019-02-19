@@ -27,11 +27,7 @@ post '/start' do
 
     #Response
     responseObject = {
-<<<<<<< HEAD
     "color"=> "#f88379",
-=======
-      "color"=> "#000000",
->>>>>>> fab35d925ab366c3b3e671f747f1944dd436d962
     }
     return responseObject.to_json
 end
