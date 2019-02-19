@@ -42,7 +42,7 @@ post '/move' do
     $head = $me[0]
     directions = ["up", "right", "left", "down"]
     direction = "up"  
-    #puts findClosestFood()
+    #puts "Closest Food Coordinates: (", $food[findClosestFood()]["x"], ",", $food[findClosestFood()]["y"], ")"
     
 
     #Response
@@ -152,6 +152,8 @@ end
 def findClosestFood()
     i = 0
     max = 0
+    maxIndex = 0
+
     loop do
         if i == $food.length
             break
@@ -163,8 +165,10 @@ def findClosestFood()
 
         if lenSquared > max
             max = lenSquared
+            maxIndex = i
         end
+        i = i + 1
     end
 
-    return max
+    return maxIndex
 end
