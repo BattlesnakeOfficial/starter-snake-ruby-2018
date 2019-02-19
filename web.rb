@@ -8,89 +8,163 @@ get '/' do
 end
 
 $board = {x:0, y:0}
-$me = {x:0,y:0}
+$me = []
 $health = 0
 $id = ""
 $food = []
-# $enemies = []
+$snakes = [] #this includes us as well
+$head = []
+$directions = {"up"=>[], "down"=>[], "left"=>[], "right"=>[]} #each possible direction with array of coordinates
 post '/start' do
-    puts "START"
     requestBody = request.body.read
-    puts requestBody
     requestJson = requestBody ? JSON.parse(requestBody) : {}
     $board[:x] = requestJson["board"]["width"].to_i
     $board[:y] = requestJson["board"]["height"].to_i
-    puts $board.to_s
-    $me[:x] = requestJson["you"]["body"][0]["x"].to_i
-    $me[:y] = requestJson["you"]["body"][0]["y"].to_i
+    $me = requestJson["you"]["body"]
     $health = requestJson["you"]["health"].to_i
     $id = requestJson["you"]["id"]
-    puts $me.to_s
-    puts $health
-    puts $id
+    $head = $me[0]
+
     #Response
     responseObject = {
-        "color"=> "#000000",
+    "color"=> "#000000",
     }
     return responseObject.to_json
 end
 
 post '/move' do
-    puts "MOVE"
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-
-    print "JSON array: ", requestJson
-    $me[:x] = requestJson["you"]["body"][0]["x"].to_i
-    $me[:y] = requestJson["you"]["body"][0]["y"].to_i
-    puts $me.to_s
+    $me = requestJson["you"]["body"]
     $health = requestJson["you"]["health"].to_i
-    puts $health
-    puts $board.to_s
     $food = requestJson["board"]["food"]
-    puts $food.to_s
+    $snakes = requestJson["board"]["snakes"]
+    $head = $me[0]
     directions = ["up", "right", "left", "down"]
-    direction = "up"
-    if $me[:y] == 0
-        puts "edge up"
-        direction = "left"
-    end
-    if  $me[:y] == $board[:y] - 1
-        puts "edge down"
-        direction = "right"
-    end  
-    if $me[:x] == 0
-        puts "edge left"
-        direction = "down"
-    end
-    if $me[:x] == $board[:x] - 1
-        puts "edge right"
-        direction = "up"
-    end
-
-    #Create board game array
-    boardArray = Array.new
-
-
+    direction = "up"  
+    #puts findClosestFood()
+    
 
     #Response
+    #If health<closestFoodLen then move => lookforfood else circleBoard
     responseObject = {
-        "move" => direction
+        "move" => circleBoard()
     }
 
     return responseObject.to_json
 end
 
+
+
 post '/end' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-
     # No response required
     responseObject = {}
-
     return responseObject.to_json
 end
 
 post '/ping' do
   200
+end
+
+#takes direction (up, down, left, right)
+#returns true if position next to head is out of bounds
+#returns false if position is not out of bounds
+def isOutOfBounds(direction)
+
+  x=0
+  y=0
+
+  case direction
+  when "up"
+    x=$head["x"]
+    y=$head["y"] - 1
+  when "down"
+    x=$head["x"]
+    y=$head["y"] + 1
+  when "left"
+    x=$head["x"] - 1
+    y=$head["y"]
+  when "right"
+    x=$head["x"] + 1
+    y=$head["y"]
+  end
+
+  if x<0 or x>14 or y<0 or y>14
+    return true
+  else
+    return false
+  end
+
+end
+
+#circles the board lol
+def circleBoard()
+
+    direction = ""
+
+    #at upper wall (but not corner)
+    if $head["y"] == 0
+        direction = "left"
+    end
+
+    #at lower wall (but not corner)
+    if  $head["y"] == $board[:y] - 1
+        direction = "right"
+    end  
+
+    #at left wall (but not corner)
+    if $head["x"] == 0
+        direction = "down"
+    end
+
+    #at right wall (but not corner)
+    if $head["x"] == $board[:x] - 1
+        direction = "up"
+    end
+
+    #at top left corner
+    if $head["x"] == 0 and $head[:x] == 0
+      direction="down"
+    end
+
+    #at top right corner
+    if $head["x"] == $board[:x] - 1 and $head["y"] == 0
+      direction="left"
+    end
+
+    #at bottom left corner
+    if $head["x"] == 0 and $head["y"] == $board[:y] - 1
+      direction="right"
+    end
+
+    #at bottom right corner
+    if $head["x"] == $board[:x] - 1 and $head["y"] == $board[:y] - 1
+      direction="up"
+    end
+  
+    return direction
+    
+
+end
+
+def findClosestFood()
+    i = 0
+    max = 0
+    loop do
+        if i == $food.length
+            break
+        end
+
+        deltaX = ($food[i]["x"] - $head["x"]).abs
+        deltaY = ($food[i]["y"] - $head["y"]).abs
+        lenSquared = (deltaX*deltaX) + (deltaY*deltaY) #Length squared bc of lack of sqrt function
+
+        if lenSquared > max
+            max = lenSquared
+        end
+    end
+
+    return max
 end
