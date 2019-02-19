@@ -13,8 +13,12 @@ $health = 0
 $id = ""
 $food = []
 $snakes = [] #this includes us as well
+<<<<<<< HEAD
 $head = []
 
+=======
+$directions = {"up"=>[], "down"=>[], "left"=>[], "right"=>[]} #each possible direction with array of coordinates
+>>>>>>> 9fcdad0f7469029a9d519d01ecac2d5adabc7619
 post '/start' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
