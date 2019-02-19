@@ -89,63 +89,11 @@ def isOutOfBounds(direction)
     y=$head["y"]
   end
 
-  if x<0 or x>14 or y<0 or y>14
+  if x<0 or x>($board[:x] -1)or y<0 or y>($board[:y] - 1)
     return true
   else
     return false
   end
 
 end
-
-#circles the board lol
-def circleBoard()
-
-    direction = ""
-
-    #at upper wall (but not corner)
-    if $head["y"] == 0
-        direction = "left"
-    end
-
-    #at lower wall (but not corner)
-    if  $head["y"] == $board[:y] - 1
-        direction = "right"
-    end  
-
-    #at left wall (but not corner)
-    if $head["x"] == 0
-        direction = "down"
-    end
-
-    #at right wall (but not corner)
-    if $head["x"] == $board[:x] - 1
-        direction = "up"
-    end
-
-    #at top left corner
-    if $head["x"] == 0 and $head[:x] == 0
-      direction="down"
-    end
-
-    #at top right corner
-    if $head["x"] == $board[:x] - 1 and $head["y"] == 0
-      direction="left"
-    end
-
-    #at bottom left corner
-    if $head["x"] == 0 and $head["y"] == $board[:y] - 1
-      direction="right"
-    end
-
-    #at bottom right corner
-    if $head["x"] == $board[:x] - 1 and $head["y"] == $board[:y] - 1
-      direction="up"
-    end
-  
-    return direction
-    
-
-end
-
-
 
