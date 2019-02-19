@@ -13,84 +13,36 @@ $health = 0
 $id = ""
 $food = []
 $snakes = [] #this includes us as well
+$head = []
+
 post '/start' do
-    puts "START"
     requestBody = request.body.read
-    puts requestBody
     requestJson = requestBody ? JSON.parse(requestBody) : {}
     $board[:x] = requestJson["board"]["width"].to_i
     $board[:y] = requestJson["board"]["height"].to_i
-    puts $board.to_s
     $me = requestJson["you"]["body"]
     $health = requestJson["you"]["health"].to_i
     $id = requestJson["you"]["id"]
-    puts $me.to_s
-    puts $health
-    puts $id
-    
+    $head = $me[0]
+
     #Response
     responseObject = {
-    "color"=> "#a7d366",
+    "color"=> "#000000",
     }
     return responseObject.to_json
 end
 
 post '/move' do
-    puts "MOVE"
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
     $me = requestJson["you"]["body"]
-    puts "me "+$me.to_s
     $health = requestJson["you"]["health"].to_i
-    puts $health
     $food = requestJson["board"]["food"]
-    puts "food " + $food.to_s
     $snakes = requestJson["board"]["snakes"]
-    puts "snakes " + $snakes.to_s
+    $head = $me[0]
     directions = ["up", "right", "left", "down"]
-    direction = "up"
-
-    #at upper wall (but not corner)
-    if $me[:y] == 0
-        direction = "left"
-    end
-
-    #at lower wall (but not corner)
-    if  $me[:y] == $board[:y] -1
-        direction = "right"
-    end  
-
-    #at left wall (but not corner)
-    if $me[:x] == 0
-        direction = "down"
-    end
-
-    #at right wall (but not corner)
-    if $me[:x] == $board[:x] -1
-        direction = "up"
-    end
-
-    #at top left corner
-    if $me[:x] == 0 and $me[:y] ==0
-      direction="down"
-    end
-
-    #at top right corner
-    if $me[:x] == $board[:x] - 1 and $me[:y] == 0
-      direction="left"
-    end
-
-    #at bottom left corner
-    if $me[:x] == 0 and $me[:y] == $board[:y] - 1
-      puts "AHHHHHH"
-      direction="right"
-    end
-
-    #at bottom right corner
-    if $me[:x] == $board[:x] - 1 and $me[:y] == $board[:y] - 1
-      direction="up"
-    end
-
+    direction = "up"  
+    
 
     #Response
     responseObject = {
@@ -100,16 +52,100 @@ post '/move' do
     return responseObject.to_json
 end
 
+
+
 post '/end' do
     requestBody = request.body.read
     requestJson = requestBody ? JSON.parse(requestBody) : {}
-
     # No response required
     responseObject = {}
-
     return responseObject.to_json
 end
 
 post '/ping' do
   200
 end
+
+#takes direction (up, down, left, right)
+#returns true if position next to head is out of bounds
+#returns false if position is not out of bounds
+def isOutOfBounds(direction)
+
+  x=0
+  y=0
+
+  case direction
+  when "up"
+    x=$head["x"]
+    y=$head["y"] - 1
+  when "down"
+    x=$head["x"]
+    y=$head["y"] + 1
+  when "left"
+    x=$head["x"] - 1
+    y=$head["y"]
+  when "right"
+    x=$head["x"] + 1
+    y=$head["y"]
+  end
+
+  if x<0 or x>14 or y<0 or y>14
+    return true
+  else
+    return false
+  end
+
+end
+
+#circles the board lol
+def circleBoard()
+
+    direction = ""
+
+    #at upper wall (but not corner)
+    if $head["y"] == 0
+        direction = "left"
+    end
+
+    #at lower wall (but not corner)
+    if  $head["y"] == $board[:y] - 1
+        direction = "right"
+    end  
+
+    #at left wall (but not corner)
+    if $head["x"] == 0
+        direction = "down"
+    end
+
+    #at right wall (but not corner)
+    if $head["x"] == $board[:x] - 1
+        direction = "up"
+    end
+
+    #at top left corner
+    if $head["x"] == 0 and $head[:x] == 0
+      direction="down"
+    end
+
+    #at top right corner
+    if $head["x"] == $board[:x] - 1 and $head["y"] == 0
+      direction="left"
+    end
+
+    #at bottom left corner
+    if $head["x"] == 0 and $head["y"] == $board[:y] - 1
+      direction="right"
+    end
+
+    #at bottom right corner
+    if $head["x"] == $board[:x] - 1 and $head["y"] == $board[:y] - 1
+      direction="up"
+    end
+  
+    return direction
+    
+
+end
+
+
+
