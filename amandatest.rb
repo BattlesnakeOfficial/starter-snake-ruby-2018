@@ -46,6 +46,7 @@ post '/move' do
     direction = "up"
 
     initDirections()
+    isEnemySnake("left")
 
     #Response
     responseObject = {
@@ -68,7 +69,8 @@ post '/ping' do
   200
 end
 
-
+#computes directions which are able to be moved to
+#stores these directions in $nondeadlydirections
 def initDirections
 
   $nondeadlydirections.clear
@@ -89,15 +91,31 @@ def initDirections
       value["y"]=$head["y"]
     end
 
-    if !isOutOfBounds(key)
-      $nondeadlydirections.push(key)      #remember to put in isEnemySnake
+    if !isOutOfBounds(key) and !isEnemySnake(key)
+      $nondeadlydirections.push(key)
     end
 
   end
 
-  puts $nondeadlydirections.to_s
+  #puts $nondeadlydirections.to_s
 
 end
+
+#takes a direction (up, down, left, right)
+#returns true if position next to head is an enemy snake
+#returns false if position is not enemy snake
+def isEnemySnake(direction)
+
+  $snakes.each do |snake|
+     if snake["body"].include?($directions[direction])
+       return true
+     end
+  end
+
+  return false
+
+end
+
 
 #takes direction (up, down, left, right)
 #returns true if position next to head is out of bounds
