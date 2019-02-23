@@ -3,8 +3,8 @@ require 'sinatra'
 require 'json'
 
 get '/' do
-    'Battlesnake documentation can be found at' \
-     '<a href=\"https://docs.battlesnake.io\">https://docs.battlesnake.io</a>.'
+  'Battlesnake documentation can be found at ' \
+    '<a href="https://docs.battlesnake.io">https://docs.battlesnake.io</a>.'
 end
 
 $board = {x:0, y:0}
@@ -51,7 +51,7 @@ post '/move' do
         "move" => moveToClosestFood()
     }
 
-    return responseObject.to_json
+  return responseObject.to_json
 end
 
 
