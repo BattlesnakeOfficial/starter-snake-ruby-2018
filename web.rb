@@ -42,13 +42,13 @@ post '/move' do
     $head = $me[0]
     directions = ["up", "right", "left", "down"]
     direction = "up"  
-    #puts "Closest Food Coordinates: (", $food[findClosestFood()]["x"], ",", $food[findClosestFood()]["y"], ")"
+    puts "Closest Food Coordinates: (", $food[findClosestFood()]["x"], ",", $food[findClosestFood()]["y"], ")"
     
 
     #Response
     #If health<closestFoodLen then move => lookforfood else circleBoard
     responseObject = {
-        "move" => circleBoard()
+        "move" => moveToClosestFood()
     }
 
     return responseObject.to_json
@@ -151,8 +151,8 @@ end
 
 def findClosestFood()
     i = 0
-    max = 0
-    maxIndex = 0
+    min = 1000
+    minIndex = 0
 
     loop do
         if i == $food.length
@@ -162,13 +162,74 @@ def findClosestFood()
         deltaX = ($food[i]["x"] - $head["x"]).abs
         deltaY = ($food[i]["y"] - $head["y"]).abs
         lenSquared = (deltaX*deltaX) + (deltaY*deltaY) #Length squared bc of lack of sqrt function
+        len = Math.sqrt(lenSquared)
 
-        if lenSquared > max
-            max = lenSquared
-            maxIndex = i
+        if len < min
+            min = len
+            minIndex = i
         end
         i = i + 1
     end
 
-    return maxIndex
+    return minIndex
+end
+
+def moveToClosestFood()
+    dY = $head["y"] - $food[findClosestFood()]["y"]
+    dX = $head["x"] - $food[findClosestFood()]["x"]
+
+    if (dY > 0)
+        dirY = "up"
+        altY = "down"
+    else
+        dirY = "down"
+        altY = "up"
+    end
+
+    if (dX > 0)
+        dirX = "left"
+        altX ="right"
+    else
+        dirX = "right"
+        altX ="left"
+    end
+
+    if (dirX > dirY)
+        if (dirX == dirToDie())
+            return altX
+        else
+            return dirX
+        end
+    else
+        if (dirY = dirToDie())
+            return altY
+        else
+            return dirY
+        end
+    end
+end
+
+def dirToRunIntoSelf()
+    headX = $me[0]["x"]
+    headY = $me[0]["y"]
+    bodyX = $me[1]["x"]
+    bodyY = $me[1]["y"]
+    dX = headX - bodyX
+    dY = headY - bodyY
+
+    if (dX == 0)
+        #The body part is under or above the head
+        if (dY > 0)
+            dir = "up"
+        else
+            dir = "down"
+        end
+    else
+        if (dX > 0)
+            dir = "left"
+        else
+            dir = "right"
+        end
+    end
+    return dir
 end
